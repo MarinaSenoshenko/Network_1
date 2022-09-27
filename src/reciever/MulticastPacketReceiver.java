@@ -14,6 +14,10 @@ public class MulticastPacketReceiver {
         this.datagramPacket = new DatagramPacket(buffer, bufferSize);
         this.multicastSocket = multicastSocket;
     }
+    
+    public MulticastSocket getMulticastSocket() {
+        return multicastSocket;
+    }
 
     public String receivePacket() {
         try {
