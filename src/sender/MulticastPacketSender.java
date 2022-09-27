@@ -25,14 +25,6 @@ public class MulticastPacketSender {
         return multicastSocket;
     }
 
-    public void setInetSocketAddress(InetSocketAddress inetSocketAddress) {
-        this.inetSocketAddress = inetSocketAddress;
-    }
-
-    public void setMulticastSocket(MulticastSocket multicastSocket) {
-        this.multicastSocket = multicastSocket;
-    }
-
     public boolean sendPacket(String message) {
     	try {
     		datagramPacket.setData(message.getBytes(StandardCharsets.UTF_8));
