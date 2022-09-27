@@ -130,9 +130,11 @@ public class MulticastApp implements Runnable{
 			if ("exit".equals(word)) {
 				multicastPacketReceiver.getMulticastSocket().close();
 				threadNotifier.getMulticastPacketSender().getMulticastSocket().close();
-			    threadNotifier.getThread().interrupt();
-			    threadNotifier.getThread().join();             
-			    System.exit(0);
+			        threadNotifier.getThread().interrupt();
+			        threadNotifier.getThread().join();       
+				thread.interrupt();
+			        thread.join();
+			        System.exit(0);
 			}
 		}
         
