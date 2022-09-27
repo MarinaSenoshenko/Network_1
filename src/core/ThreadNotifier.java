@@ -4,16 +4,21 @@ import java.net.InetSocketAddress;
 
 import sender.MulticastPacketSender;
 
-public class ThreadNotifier extends Thread {
+public class ThreadNotifier implements Runnable {
     private MulticastPacketSender multicastPacketSender;
     private InetSocketAddress inetSocketAddress;
     private String message;
     private int notifyPeriod;
+    private static Thread thread = new Thread();
 
     public ThreadNotifier(MulticastPacketSender multicastPacketSender, String message, int notifyPeriod) {
         this.multicastPacketSender = multicastPacketSender;
         this.message = message;
         this.notifyPeriod = notifyPeriod;
+    }
+    
+    public Thread getThread() {
+    	return thread;
     }
 
     public MulticastPacketSender getMulticastPacketSender() {
@@ -51,7 +56,7 @@ public class ThreadNotifier extends Thread {
     private void notifyGroup() {
         while (true) {
             try {
-                sleep(notifyPeriod);
+                thread.sleep(notifyPeriod);
                 multicastPacketSender.sendPacket(message);
             } catch (InterruptedException exc) {
                 exc.printStackTrace();
