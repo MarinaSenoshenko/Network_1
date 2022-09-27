@@ -29,14 +29,14 @@ public class MulticastApp {
         timer = new Timer();
         appId = UUID.randomUUID();
         appCopies = new HashMap<>();
-        threadNotifier = getMulticastNotifier(context, appId.toString(), context.getNotifyPeriod());
+        threadNotifier = getMulticastNotifier(context, appId.toString(), context.getNotifyPeriod()); 
         multicastPacketReceiver = getMulticastReceiver(context, appId.toString().length());
         runApp();
     }
     
     private InetSocketAddress getGroupAddress(Context context) {
         try {
-            return new InetSocketAddress(InetAddress.getByName(context.getIpGroup()), context.getPort());
+            return new InetSocketAddress(InetAddress.getByName(context.getIpGroup()), context.getPort()); // ip сокета - комбинация ip группы и порта
         } catch (UnknownHostException exc) {
             exc.printStackTrace();
         }
@@ -119,7 +119,7 @@ public class MulticastApp {
 
     private void runApp() {
         runTimer();
-        threadNotifier.start();
+        threadNotifier.getThread().start();
         startFind(); 
     }
 }
