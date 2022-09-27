@@ -7,6 +7,7 @@ import java.net.MulticastSocket;
 import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
@@ -15,17 +16,18 @@ import context.Context;
 import reciever.MulticastPacketReceiver;
 import sender.MulticastPacketSender;
 
-public class MulticastApp {
+public class MulticastApp implements Runnable{
     private ThreadNotifier threadNotifier;
     private MulticastPacketReceiver multicastPacketReceiver;
     private UUID appId;
     private HashMap<String, Boolean> appCopies;
     private Timer timer;
+    private static final Thread thread = new Thread();
     
     private static final int TIMER_DELAY = 0;
     private static final int UPDATE_TIME = 2000;
     
-    public MulticastApp(Context context) {
+    public MulticastApp(Context context) throws InterruptedException {
         timer = new Timer();
         appId = UUID.randomUUID();
         appCopies = new HashMap<>();
@@ -116,10 +118,28 @@ public class MulticastApp {
             }
         }
     }
+    
 
-    private void runApp() {
+    private void runApp() throws InterruptedException {
         runTimer();
         threadNotifier.getThread().start();
-        startFind(); 
+		thread.start(); 
+        
+        try (Scanner scanner = new Scanner(System.in)) {
+			String word = scanner.nextLine();
+			if ("exit".equals(word)) {
+				multicastPacketReceiver.getMulticastSocket().close();
+				threadNotifier.getMulticastPacketSender().getMulticastSocket().close();
+			    threadNotifier.getThread().interrupt();
+			    threadNotifier.getThread().join();             
+			    System.exit(0);
+			}
+		}
+        
     }
+
+	@Override
+	public void run() {
+		startFind(); 		
+	}
 }
