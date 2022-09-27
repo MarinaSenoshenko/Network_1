@@ -53,19 +53,24 @@ public class ThreadNotifier implements Runnable {
         this.notifyPeriod = notifyPeriod;
     }
 
-    private void notifyGroup() {
-        while (true) {
-            try {
-                thread.sleep(notifyPeriod);
-                multicastPacketSender.sendPacket(message);
-            } catch (InterruptedException exc) {
-                exc.printStackTrace();
-            }
-        }
+    private void notifyGroup() throws InterruptedException {
+        try {
+			while (true) {		    
+			     thread.sleep(notifyPeriod);
+			     multicastPacketSender.sendPacket(message);			    
+			}
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
     }
+    
 
     @Override
     public void run() {
-        notifyGroup();
+        try {
+			notifyGroup();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
     }
 }
