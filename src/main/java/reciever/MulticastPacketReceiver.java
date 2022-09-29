@@ -17,7 +17,7 @@ public class MulticastPacketReceiver {
 
     public String receivePacket() {
         try {
-        	multicastSocket.receive(datagramPacket);
+        multicastSocket.receive(datagramPacket);
             return new String(buffer);
         } catch (IOException exc) {
             exc.printStackTrace();
