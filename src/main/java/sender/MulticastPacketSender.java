@@ -17,9 +17,9 @@ public class MulticastPacketSender {
 
     public boolean sendPacket(String message) {
     	try {
-    	datagramPacket.setData(message.getBytes(StandardCharsets.UTF_8));
+    	    datagramPacket.setData(message.getBytes(StandardCharsets.UTF_8));
     	    datagramPacket.setLength(message.length());
-        multicastSocket.send(datagramPacket);
+            multicastSocket.send(datagramPacket);
             return true;
         } catch (IOException exc) {
             exc.printStackTrace();
