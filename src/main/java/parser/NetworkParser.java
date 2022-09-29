@@ -12,9 +12,9 @@ public class NetworkParser {
 
     private static Properties loadProperties(String file) {
         try (InputStream inputStream = NetworkParser.class.getResourceAsStream(file)) {
-        	Properties properties = new Properties();
-            properties.load(inputStream);
-            return properties;
+        	 Properties properties = new Properties();
+             properties.load(inputStream);
+             return properties;
         }
         catch (IOException exc) {
             exc.printStackTrace();
