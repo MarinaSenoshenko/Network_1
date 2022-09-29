@@ -7,10 +7,15 @@ import java.net.MulticastSocket;
 import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import main.java.context.Context;
 import main.java.reciever.MulticastPacketReceiver;
@@ -28,8 +33,8 @@ public class MulticastApp implements Runnable{
     private static final int TIMER_DELAY = 0;
     private static final int UPDATE_TIME = 2000;
     
-    public MulticastApp(Context context) throws InterruptedException {
-        timer = new Timer();
+    public MulticastApp(Context context) {
+	timer = new Timer();
         appId = UUID.randomUUID();
         appCopies = new HashMap<>();
         threadNotifier = getMulticastNotifier(context, appId.toString(), context.getNotifyPeriod()); 
@@ -48,10 +53,10 @@ public class MulticastApp implements Runnable{
 
     private MulticastSocket getMulticastSocket(Context context, InetSocketAddress inetSocketAddress) {
         try {
-        	if (multicastSocket == null) {
+            if (multicastSocket == null) {
                 multicastSocket = new MulticastSocket(context.getPort()); 
                 multicastSocket.joinGroup(inetSocketAddress, null);
-        	}
+            }
             return multicastSocket;
         } catch (IOException exc) {
             exc.printStackTrace();
@@ -72,18 +77,18 @@ public class MulticastApp implements Runnable{
     }
 
     private boolean checkAppId(String id) {
-        try {
-           if (!UUID.fromString(id).equals(appId)) {
-               return true;
-           }
-      } catch (IllegalArgumentException exc) {
-           exc.printStackTrace();
-      }
+    	try {
+            if (!UUID.fromString(id).equals(appId)) {
+                return true;
+            }
+        } catch (IllegalArgumentException exc) {
+            exc.printStackTrace();
+        }
     	return false;
     }
     
     private void printCopies() {
-    	  System.out.println("My app id:\n" + appId + "\nId of copies:"); 
+    	System.out.println("My app id:\n" + appId + "\nId of copies:"); 
     }
 
     private void showAllAppCopies() {
@@ -119,28 +124,34 @@ public class MulticastApp implements Runnable{
             }
         }
     }
-    
 
-    private void runApp() throws InterruptedException {
+    private void runApp() {
         runTimer();
+
         threadNotifier.getThread().start();
-		    thread.start(); 
+		thread.start(); 
         
         try (Scanner scanner = new Scanner(System.in)) {
-			      String word = scanner.nextLine();
-			      if ("exit".equals(word)) {
-				        multicastSocket.close();
-			          threadNotifier.getThread().interrupt();
-			          threadNotifier.getThread().join();     
-			          thread.interrupt();
-			          thread.join();  
-			          System.exit(0);
-			      }
-		    }        
+		String word = scanner.nextLine();
+		if ("exit".equals(word)) {
+			thread.interrupt();
+			thread.join(); 
+			threadNotifier.getThread().stop();
+			threadNotifier.getThread().interrupt();
+			threadNotifier.getThread().join();    
+			multicastSocket.close();
+			System.exit(0);
+		}
+		
+     
+        } catch (InterruptedException e) {
+	     e.printStackTrace();
+	}
+        
     }
 
-	  @Override
-	  public void run() {
-		    startFind(); 		
-	  }
+	@Override
+	public void run() {
+	     startFind(); 		
+	}
 }
