@@ -18,23 +18,19 @@ public class ThreadNotifier implements Runnable {
     	return thread;
     }
 
-    private void notifyGroup() throws InterruptedException {
+    private void notifyGroup() {
         try {
-			while (!Thread.interrupted()) {		    
-			     Thread.sleep(notifyPeriod);
-			     multicastPacketSender.sendPacket(message);			    
-			}
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+	    while (!Thread.interrupted()) {		    
+	        Thread.sleep(notifyPeriod);
+	        multicastPacketSender.sendPacket(message);			    
+            }
+        } catch (InterruptedException e) {
+	      e.printStackTrace();
+	}
     }   
 
     @Override
     public void run() {
-        try {
-			notifyGroup();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+	  notifyGroup();
     }
 }
