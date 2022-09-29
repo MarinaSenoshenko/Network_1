@@ -10,7 +10,7 @@ public class NetworkParser {
     private static final String PORT = "port";
     private static final String NOTIFY_PERIOD = "notify_period";
 
-    private Properties loadProperties(String file) {
+    private static Properties loadProperties(String file) {
         try (InputStream inputStream = NetworkParser.class.getResourceAsStream(file)) {
         	Properties properties = new Properties();
             properties.load(inputStream);
@@ -22,7 +22,7 @@ public class NetworkParser {
         return null;
     }
 
-    public Context getNetworkContext(String file, String ip_group) {
+    public static Context getNetworkContext(String file, String ip_group) {
         Properties properties = loadProperties(file);
         return new Context(ip_group, 
         		Integer.parseInt(properties.getProperty(PORT)), 
